@@ -101,9 +101,11 @@ namespace Blazor.Learner.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("IBAN")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocalAccountNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -332,7 +334,8 @@ namespace Blazor.Learner.Server.Migrations
                 {
                     b.HasOne("Blazor.Learner.Shared.Models.Account", "Account")
                         .WithMany("Balances")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Blazor.Learner.Shared.Models.BalanceTransaction", b =>

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blazor.Learner.Server.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20201004083520_init_migration_1")]
-    partial class init_migration_1
+    [Migration("20201004170425_initdb_0")]
+    partial class initdb_0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,9 +103,11 @@ namespace Blazor.Learner.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("IBAN")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocalAccountNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -334,7 +336,8 @@ namespace Blazor.Learner.Server.Migrations
                 {
                     b.HasOne("Blazor.Learner.Shared.Models.Account", "Account")
                         .WithMany("Balances")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Blazor.Learner.Shared.Models.BalanceTransaction", b =>

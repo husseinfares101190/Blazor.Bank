@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Blazor.Learner.Server.Migrations
 {
-    public partial class init_migration_1 : Migration
+    public partial class initdb_0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +13,8 @@ namespace Blazor.Learner.Server.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LocalAccountNumber = table.Column<string>(nullable: true),
-                    IBAN = table.Column<string>(nullable: true),
+                    LocalAccountNumber = table.Column<string>(nullable: false),
+                    IBAN = table.Column<string>(nullable: false),
                     BankName = table.Column<string>(nullable: true),
                     Currency = table.Column<decimal>(nullable: false),
                     CurrentBalance = table.Column<decimal>(nullable: false)
@@ -112,7 +112,7 @@ namespace Blazor.Learner.Server.Migrations
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
