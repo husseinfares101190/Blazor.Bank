@@ -1,0 +1,18 @@
+﻿@page "/account/create"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+
+<h3>Create</h3>
+
+<AccountComp ButtonText="Create Account" OnValidSubmit="@CreateAccount"
+            acc="@acc" 
+             ></AccountComp>
+
+@code {
+    Account acc = new Account();
+    async Task CreateAccount()
+    {
+        await http.PostAsJsonAsync("api/account", acc);
+        uriHelper.NavigateTo("account");
+    }
+}

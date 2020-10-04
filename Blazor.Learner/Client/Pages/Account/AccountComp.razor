@@ -1,0 +1,49 @@
+﻿<EditForm Model="@acc" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Local Accoun Number :</label>
+        <div>
+            <InputText @bind-Value="@acc.LocalAccountNumber" class="form-control"/>
+            <ValidationMessage For="@(() => acc.LocalAccountNumber)" />
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>IBAN :</label>
+            <div>
+                <InputText @bind-Value="@acc.IBAN" class="form-control" />
+                <ValidationMessage For="@(() => acc.IBAN)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>Bank :</label>
+            <div>
+                <select @bind="@acc.BankName" class="form-control">
+                    <option value=""></option>
+                        @foreach (var cnt in branches)
+                        {
+                            <option value="@cnt">@cnt</option>
+                        }
+                   
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+@code {
+    IEnumerable<String> branches = new List<string>() { "bank_A", "bank_B" };
+    [Parameter] public Account acc { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}

@@ -1,0 +1,47 @@
+﻿using Blazor.Learner.Server.Models;
+using Blazor.Learner.Shared.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Blazor.Learner.Server.Data
+{
+    public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
+    {
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Balance>()
+            .HasIndex(p => new { p.BalanceDate, p.AccountNumber }).IsUnique();
+
+
+            modelBuilder.Entity<BalanceTransaction>()
+        .HasKey(bc => new { bc.BalanceId, bc.TransactionId });
+            modelBuilder.Entity<BalanceTransaction>()
+                .HasOne(bc => bc.Transaction)
+                .WithMany(b => b.BalanceTransactions)
+                .HasForeignKey(bc => bc.TransactionId);
+
+            modelBuilder.Entity<BalanceTransaction>()
+                .HasOne(bc => bc.Balance)
+                .WithMany(c => c.BalanceTransactions)
+                .HasForeignKey(bc => bc.BalanceId);
+
+             base.OnModelCreating(modelBuilder);
+        }
+
+        public DbSet<Developer> Developers { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Balance> Balances { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<BalanceTransaction> BalanceTransactions { get; set; }
+
+    }
+}

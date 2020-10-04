@@ -1,0 +1,69 @@
+﻿@page "/account"
+@inject HttpClient client
+@inject IJSRuntime js
+
+<h3>Accounts</h3>
+<small>Add as many account as you wish.</small>
+<div class="form-group">
+    <a class="btn btn-success" href="account/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+<br>
+
+@if (accounts == null)
+{
+    <text>Loading...</text>
+}
+else if (accounts.Length == 0)
+{
+    <text>No Records Found.</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Account Id</th>
+                <th>IBAN</th>
+                <th>Bank Name</th>
+                <th>Current Balance</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Account acc in accounts)
+            {
+                <tr>
+                    <td>@acc.Id</td>
+                    <td>@acc.IBAN</td>
+                    <td>@acc.BankName</td>
+                    <td>@acc.CurrentBalance</td>
+                 
+                    <td>
+                        <a class="btn btn-success" href="account/edit/@acc.Id">Edit</a>
+                        <a class="btn btn-success" href="transaction/create/@acc.Id">Transaction</a>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(acc.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+@code {
+    Account[] accounts { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await client.GetFromJsonAsync<Account[]>("api/account");
+    }
+
+    async Task Delete(int accountId)
+    {
+        var acc = accounts.First(x => x.Id == accountId);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {acc.IBAN}'s ({acc.BankName}) Account?"))
+        {
+            await client.DeleteAsync($"api/account/{accountId}");
+            await OnInitializedAsync();
+        }
+    }
+}
+

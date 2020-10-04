@@ -1,0 +1,140 @@
+﻿@page "/account-radzen"
+
+@using Microsoft.EntityFrameworkCore
+@inject HttpClient http;
+@inject NavigationManager uriHelper
+@inject Radzen.NotificationService notificationService
+
+
+<h1>Accounts</h1>
+
+<p>This page demonstrates Accounts</p>
+
+<RadzenGrid @ref="accountdsGrid" AllowFiltering="true" AllowPaging="true" PageSize="3" AllowSorting="true" EditMode="DataGridEditMode.Single"
+            Data="@accounts" TItem="Account" RowUpdate="@OnUpdateRow">
+    <Columns>
+        <RadzenGridColumn Width="100px" TItem="Account" Property="Id" Title="Account ID" />
+        <RadzenGridColumn TItem="Account" Property="LocalAccountNumber" Title="Local Account Number">
+            <EditTemplate Context="account">
+                <RadzenTextBox @bind-Value="account.LocalAccountNumber" Style="width:100%; display: block" Name="LocalAccountNumber" />
+            </EditTemplate>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Account" Property="IBAN" Title="IBAN">
+            <EditTemplate Context="account">
+                <RadzenTextBox @bind-Value="account.IBAN" Style="width:100%; display: block" Name="IBAN" />
+                <RadzenRequiredValidator Component="IBAN" Text="IBAN is required" Popup="false" Style="position: absolute" />
+                <RadzenRegexValidator Component="IBAN" Text="IBAN invaild" Pattern="^BE\d{2}\s?([0-9a-zA-Z]{4}\s?){4}[0-9a-zA-Z]{2}$" Popup="false" Style="position: absolute" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+
+        <RadzenGridColumn Width="200px" TItem="Account" Property="BankName" Title="Bank Name">
+            <EditTemplate Context="account">
+                <RadzenDropDown @bind-Value="account.BankName" Data="@branches" Style="width:100%" />
+            </EditTemplate>
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Account" Property="CurrentBalance" Title="CurrentBalance" />
+
+        <RadzenGridColumn TItem="Account" Context="sampleBlazorModelsSampleOrder" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="account">
+                <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(account))">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="account">
+                <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(account))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Account" Context="account" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="account">
+                <RadzenButton Icon="save" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" Click="@((args) => SaveRow(account))">
+                </RadzenButton>
+            </Template>
+        </RadzenGridColumn>
+
+        <RadzenGridColumn TItem="Account" Context="account" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+            <Template Context="account">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(account))">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="account">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(account))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Account" Context="sampleBlazorModelsSampleOrder" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="150px">
+            <Template Context="account">
+                <RadzenButton Text="Transaction" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Warning" Click="@(args => gotoTransaction(account))">
+                </RadzenButton>
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+</RadzenGrid>
+
+@code {
+    RadzenGrid<Account> accountdsGrid;
+    IList<Account> accounts;
+
+    IEnumerable<String> branches = new List<string>() { "bank_A", "bank_B" };
+
+    void gotoTransaction(Account account)
+    {
+        string url = "transaction/create/" + account.Id;
+        uriHelper.NavigateTo(url);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        // fetch Accounts
+        accounts = accounts = await http.GetFromJsonAsync<List<Account>>("api/account");
+
+    }
+
+    void EditRow(Account account)
+    {
+        accountdsGrid.EditRow(account);
+    }
+
+    void OnUpdateRow(Account account)
+    {
+
+        http.PutAsJsonAsync("api/account", account);
+
+    }
+
+    async Task SaveRow(Account account)
+    {
+
+        HttpResponseMessage response = await http.PutAsJsonAsync("api/account", account);
+        if (response.IsSuccessStatusCode)
+            await accountdsGrid.UpdateRow(account);
+        notificationService.Notify(new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = "Account updated",
+            Detail = account.LocalAccountNumber + " updated ",
+            Duration = 4000
+        });
+        await InvokeAsync(() => { StateHasChanged(); });
+
+    }
+
+    async Task CancelEdit(Account account)
+    {
+        accountdsGrid.CancelEditRow(account);
+        await http.PostAsJsonAsync("api/account/cancleUpdates", account);
+    }
+
+    async Task DeleteRow(Account account)
+    {
+
+        await http.DeleteAsync($"api/developer/{account.Id}");
+
+        accounts.Remove(account);
+
+        await accountdsGrid.Reload();
+    }
+}

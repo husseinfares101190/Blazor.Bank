@@ -1,0 +1,65 @@
+﻿@page "/transaction/create/{accountId:int}"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject Radzen.NotificationService notificationService
+<RadzenTemplateForm Data="@transaction"  TItem="Transaction" Submit="@CreateTransaction" >
+    <div class="row">
+        <div class="col-md-10">
+            <RadzenFieldset Text="Transaction Info">
+
+                <div class="row">
+                    <div class="col-md-6 align-items-center d-flex">
+                        <RadzenLabel Text="Transaction Date" />
+                    </div>
+                    <div class="col-md-6">
+                        <RadzenDatePicker style="width: 100%;" Name="TransactionDate" @bind-Value="transaction.TransactionDate" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 align-items-center d-flex">
+                        <RadzenLabel Text="Transaction Amount" />
+                    </div>
+                    <div class="col-md-6">
+                        <RadzenNumeric style="width: 100%;" Name="Amount" @bind-Value="transaction.TransactionAmount" />
+                    </div>
+                </div>
+            </RadzenFieldset>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12 d-flex align-items-end justify-content-end" style="margin-top: 16px;">
+            <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+        </div>
+    </div>
+</RadzenTemplateForm>
+
+
+@code {
+    [Parameter] public int accountId { get; set; }
+    Transaction transaction = new Transaction();
+    Account account = new Account();
+
+
+    protected async override Task OnParametersSetAsync()
+    {
+        account = await http.GetFromJsonAsync<Account>($"api/account/{accountId}");
+    }
+
+
+    async Task CreateTransaction()
+    {
+
+         await http.PostAsJsonAsync($"api/transaction/{accountId}", transaction);
+        notificationService.Notify(new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = "Transaction Added",
+            Detail = transaction.TransactionAmount + " $ had been added to account "+ account.IBAN ,
+            Duration = 4000
+        });
+        await InvokeAsync(() => { StateHasChanged(); });
+
+        uriHelper.NavigateTo("account");
+    }
+
+}
