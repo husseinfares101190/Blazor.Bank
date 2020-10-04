@@ -2,10 +2,6 @@
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Blazor.Learner.Server.Data
 {
@@ -20,12 +16,21 @@ namespace Blazor.Learner.Server.Data
             modelBuilder.Entity<Balance>()
             .HasIndex(p => new { p.BalanceDate, p.AccountNumber }).IsUnique();
 
-            modelBuilder.Entity<Balance>().HasOne(a=>a.Account).WithMany(b=>b.Balances)
+            modelBuilder.Entity<Balance>().HasOne(a => a.Account).WithMany(b => b.Balances)
             .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<BalanceTransaction>()
         .HasKey(bc => new { bc.BalanceId, bc.TransactionId });
+
+            modelBuilder.Entity<BalanceTransaction>()
+            .HasOne<Balance>(s => s.Balance)
+            .WithMany().OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BalanceTransaction>()
+           .HasOne<Transaction>(s => s.Transaction)
+           .WithMany().OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<BalanceTransaction>()
                 .HasOne(bc => bc.Transaction)
                 .WithMany(b => b.BalanceTransactions).OnDelete(DeleteBehavior.Cascade)
@@ -36,7 +41,7 @@ namespace Blazor.Learner.Server.Data
                 .WithMany(c => c.BalanceTransactions).OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(bc => bc.BalanceId);
 
-             base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Developer> Developers { get; set; }
