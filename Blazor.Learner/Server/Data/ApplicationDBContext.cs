@@ -20,17 +20,20 @@ namespace Blazor.Learner.Server.Data
             modelBuilder.Entity<Balance>()
             .HasIndex(p => new { p.BalanceDate, p.AccountNumber }).IsUnique();
 
+            modelBuilder.Entity<Balance>().HasOne(a=>a.Account).WithMany(b=>b.Balances)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<BalanceTransaction>()
         .HasKey(bc => new { bc.BalanceId, bc.TransactionId });
             modelBuilder.Entity<BalanceTransaction>()
                 .HasOne(bc => bc.Transaction)
-                .WithMany(b => b.BalanceTransactions)
+                .WithMany(b => b.BalanceTransactions).OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(bc => bc.TransactionId);
 
             modelBuilder.Entity<BalanceTransaction>()
                 .HasOne(bc => bc.Balance)
-                .WithMany(c => c.BalanceTransactions)
+                .WithMany(c => c.BalanceTransactions).OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(bc => bc.BalanceId);
 
              base.OnModelCreating(modelBuilder);
