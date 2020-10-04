@@ -1,0 +1,50 @@
+﻿@page "/balance/create"
+@using Blazor.Learner.Client.Pages.Balance
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject Radzen.NotificationService notificationService
+
+<h3>Create</h3>
+
+<BalanceComponent ButtonText="Create Balance" OnValidSubmit="@CreateBalance" balance="@balance" accounts="@accounts"></BalanceComponent>
+
+@code {
+    Balance balance = new Balance();
+    List<Account> accounts  { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await http.GetFromJsonAsync<List<Account>>("api/account");
+    }
+
+    async Task CreateBalance()
+    {
+
+        HttpResponseMessage response = await http.PostAsJsonAsync("api/balance", balance);
+        if (response.IsSuccessStatusCode)
+        {
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Balance Added",
+                Detail = "Add balance " + balance.BalanceAmount + " to account " + balance.Account.LocalAccountNumber,
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+            uriHelper.NavigateTo("account");
+        }
+        else
+        {
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "error while adding balance",
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+        }
+    }
+
+
+}

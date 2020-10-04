@@ -1,0 +1,54 @@
+﻿<EditForm Model="@balance" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="form-group ">
+        <div>
+            <label>Account :</label>
+            <div>
+                <RadzenDropDown AllowClear="true" AllowFiltering="true" 
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts" 
+                                @bind-Value="balance.Account"
+                                TextProperty="LocalAccountNumber" ValueProperty="Account" 
+                                Style="margin-bottom: 20px; width:400px;"
+                                Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-6 align-items-center d-flex">
+            <RadzenLabel Text="Balance Date" />
+        </div>
+        <div class="col-md-6">
+            <RadzenDatePicker style="width: 100%;" Name="BalanceDate" @bind-Value="balance.BalanceDate" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-6 align-items-center d-flex">
+            <RadzenLabel Text="Balance Amount" />
+        </div>
+        <div class="col-md-6">
+            <RadzenNumeric @bind-Value="balance.BalanceAmount" Name="BalanceAmount"></RadzenNumeric>
+        </div>
+    </div>
+
+      <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+@code {
+    [Parameter] public List<Account> accounts { get; set; }
+    [Parameter] public Balance balance { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    void ChangeBound(object value, string name)
+    {
+        Console.Out.WriteLine(value);
+        StateHasChanged();
+    }
+}
