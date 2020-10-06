@@ -1,0 +1,99 @@
+﻿@page "/balance/edit"
+@using Blazor.Learner.Client.Pages.Balance
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject Radzen.NotificationService notificationService
+@inject IBalanceService balanceService
+
+<h3>Edit Balance </h3>
+
+<div class="form-group ">
+    <div>
+        <RadzenLabel Text="Account" />
+
+        <div>
+            <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
+                            @bind-Value="account"
+                            TextProperty="LocalAccountNumber" ValueProperty="Account"
+                            Style="margin-bottom: 20px; width:400px;"
+                            Change="@(args => ChangeBoundAccount(args, "DropDown with bound Value"))" />
+        </div>
+    </div>
+</div>
+
+<div class="form-group ">
+    <div>
+        <RadzenLabel Text="Account" />
+
+        <div>
+            <RadzenDropDown AllowClear="true" AllowFiltering="true" 
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@balances"
+                            @bind-Value="@balance"
+                            TextProperty="BalanceDate" ValueProperty="Balance"
+                            Style="margin-bottom: 20px; width:400px;"
+                            Change="@(args => ChangeBoundBalance (args, "DropDown with bound Value"))" />
+        </div>
+    </div>
+</div>
+
+
+
+<BalanceComponent ButtonText="Edit Balance" OnValidSubmit="@EditBalance" balance="@balance" accounts="@accounts" isEditMode="true"></BalanceComponent>
+
+@code {
+    Balance balance = new Balance();
+    Account account = new Account();
+    List<Account> accounts { get; set; }
+    Balance [] balances { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await http.GetFromJsonAsync<List<Account>>("api/account");
+    }
+
+    async Task EditBalance()
+    {
+
+        HttpResponseMessage response = await balanceService.EditBalance(balance);
+        if (response.IsSuccessStatusCode)
+        {
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Balance Saved",
+                Detail = "Update balance " + balance.BalanceAmount + " to account " + balance.Account.LocalAccountNumber,
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+            uriHelper.NavigateTo("account");
+        }
+        else
+        {
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "error while adding balance",
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+        }
+    }
+
+    async Task ChangeBoundAccount(object value, string name)
+    {
+        account = (Account) value;
+        balances = await http.GetFromJsonAsync<Balance[]>($"api/account/balances/{account.Id}");
+        StateHasChanged();
+    }
+
+    void ChangeBoundBalance(object value, string name)
+    {
+        balance = (Balance)value;
+        balance.Account = account;
+        StateHasChanged();
+    }
+
+
+}

@@ -26,5 +26,11 @@ namespace Blazor.Learner.Client.Services
            
 
         }
+
+        async Task<HttpResponseMessage> IBalanceService.EditBalance(Balance balance)
+        {
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync("api/balance/edit", balance);
+            return response;
+        }
     }
 }

@@ -37,5 +37,14 @@ namespace Blazor.Learner.Server.Controllers
             return Ok(balance.Id);
         }
 
+        [HttpPut("edit")]
+        public async Task<IActionResult> Put(Balance balance)
+        {
+
+            _context.Entry(balance).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(balance.Id);
+        }
+
     }
 }

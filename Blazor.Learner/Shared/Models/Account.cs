@@ -24,7 +24,7 @@ namespace Blazor.Learner.Shared.Models
 
         public decimal CurrentBalance { get; set; }
 
-        public ICollection<Balance> Balances { get; set; }
+        public List<Balance> Balances { get; set; }
 
         public Account()
         {

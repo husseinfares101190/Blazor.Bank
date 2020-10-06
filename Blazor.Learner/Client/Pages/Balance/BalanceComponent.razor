@@ -1,21 +1,24 @@
 ﻿<EditForm Model="@balance" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
-    
-        <div class="form-group ">
-            <div>
-                <RadzenLabel Text="Account" />
+        @if(!isEditMode)
+        {
 
+        
+            <div class="form-group ">
                 <div>
-                    <RadzenDropDown AllowClear="true" AllowFiltering="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
-                                    @bind-Value="balance.Account"
-                                    TextProperty="LocalAccountNumber" ValueProperty="Account"
-                                    Style="margin-bottom: 20px; width:400px;"
-                                    Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+                    <RadzenLabel Text="Account" />
+
+                    <div>
+                        <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
+                                        @bind-Value="balance.Account"
+                                        TextProperty="LocalAccountNumber" ValueProperty="Account"
+                                        Style="margin-bottom: 20px; width:400px;"
+                                        Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+                    </div>
                 </div>
             </div>
-        </div>
-
+        }
         <div class="form-group ">
             <div>
                 <RadzenLabel Text="Balance Date" />
@@ -50,6 +53,7 @@
     [Parameter] public Balance balance { get; set; }
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool isEditMode { get; set; }
 
     void ChangeBound(object value, string name)
     {
