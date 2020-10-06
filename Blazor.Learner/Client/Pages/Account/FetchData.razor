@@ -2,12 +2,24 @@
 @inject HttpClient client
 @inject IJSRuntime js
 
-<h3>Accounts</h3>
-<small>Add as many account as you wish.</small>
-<div class="form-group">
-    <a class="btn btn-success" href="account/create"><i class="oi oi-plus"></i> Create New</a>
-</div>
+<h4>
+    Accounts
+    <a class="btn btn-sm btn-success" href="account/create"><i class="oi oi-plus"></i></a>
+</h4>
 <br>
+
+<div class="col-md-8" style="padding-left:0px;">
+    <div class="input-group">
+        <h5 style="padding-top: 6px; padding-right: 14px;" >Search by Local Number :</h5>
+        <input type="text" class="form-control"  @bind-value="@searchQuery">
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" @onclick="@SearchAccounts">
+                Search
+            </button>
+        </span>
+    </div><!-- /input-group -->
+</div><!-- /.col-lg-6 -->
+<br />
 
 @if (accounts == null)
 {
@@ -22,7 +34,8 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Account Id</th>
+                <th>Id</th>
+                <th>Local Number</th>
                 <th>IBAN</th>
                 <th>Bank Name</th>
                 <th>Current Balance</th>
@@ -34,10 +47,11 @@ else
             {
                 <tr>
                     <td>@acc.Id</td>
+                    <td>@acc.LocalAccountNumber</td>
                     <td>@acc.IBAN</td>
                     <td>@acc.BankName</td>
                     <td>@acc.CurrentBalance</td>
-                 
+
                     <td>
 
                         <a class="btn btn-info" href="view/account/@acc.Id">View</a>
@@ -53,6 +67,17 @@ else
 }
 @code {
     Account[] accounts { get; set; }
+    String searchQuery { get; set; } = String.Empty;
+
+
+    protected async Task SearchAccounts()
+    {
+        if (searchQuery != null && searchQuery.Length != 0)
+            accounts = accounts.Where(a => a.LocalAccountNumber.ToString().Contains(searchQuery)).ToArray();
+        else
+            accounts = await client.GetFromJsonAsync<Account[]>("api/account");
+
+    }
     protected override async Task OnInitializedAsync()
     {
         accounts = await client.GetFromJsonAsync<Account[]>("api/account");

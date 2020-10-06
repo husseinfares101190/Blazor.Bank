@@ -4,25 +4,26 @@
 @inject HttpClient client
 @inject Radzen.NotificationService notificationService
 
+<h4>Delete Transaction </h4>
+<br />
 <EditForm Model="@transaction" OnValidSubmit="@DeleteTransaction">
     <DataAnnotationsValidator />
 
     <div class="form-group ">
-        <div>
-            <label>Account :</label>
-            <div>
-                <RadzenDropDown AllowClear="true" AllowFiltering="true"
-                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@transactions"
-                                @bind-Value="transaction"
-                                TextProperty="Id" ValueProperty="Transaction"
-                                Style="margin-bottom: 20px;  margin-bottom: 20px; width:400px;" />
-            </div>
+        <div class="input-group">
+            <label style=" margin-right: 10px; margin-top: 4px;">Choose Transaction :</label>
+
+            <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@transactions"
+                            @bind-Value="transaction"
+                            TextProperty="Id" ValueProperty="Transaction"
+                            Style="margin-bottom: 20px;  margin-bottom: 20px; width:400px;" />
+            <button type="submit" class="btn btn-danger" style="margin-left: 20px; height: 35px; width: 86px; ">
+                Delete
+            </button>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-danger">
-        Delete
-    </button>
 
 </EditForm>
 
