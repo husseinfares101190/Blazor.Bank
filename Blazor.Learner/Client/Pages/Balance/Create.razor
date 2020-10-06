@@ -3,6 +3,7 @@
 @inject HttpClient http
 @inject NavigationManager uriHelper
 @inject Radzen.NotificationService notificationService
+@inject IBalanceService balanceService
 
 <h3>Create</h3>
 
@@ -20,7 +21,7 @@
     async Task CreateBalance()
     {
 
-        HttpResponseMessage response = await http.PostAsJsonAsync("api/balance", balance);
+        HttpResponseMessage response = await balanceService.CreateBalance(balance);
         if (response.IsSuccessStatusCode)
         {
             notificationService.Notify(new NotificationMessage()

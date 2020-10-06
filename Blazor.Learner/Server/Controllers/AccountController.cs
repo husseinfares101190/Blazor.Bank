@@ -24,15 +24,24 @@ namespace Blazor.Learner.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var devs = await _context.Accounts.ToListAsync();
-            return Ok(devs);
+            var accounts = await _context.Accounts.ToListAsync();
+            return Ok(accounts);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var dev = await _context.Accounts.FirstOrDefaultAsync(a=>a.Id == id);
-            return Ok(dev);
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
+            return Ok(account);
         }
+
+        [HttpGet("balances/{accountId}")]
+        public async Task<IActionResult> GetBalances(int accountId)
+        {
+            Balance [] balances = await _context.Balances.Where(b => b.AccountNumber == accountId).ToArrayAsync();
+            return Ok(balances);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Post(Account account)
         {

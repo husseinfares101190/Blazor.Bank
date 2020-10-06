@@ -1,39 +1,44 @@
 ﻿<EditForm Model="@balance" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
-
-    <div class="form-group ">
-        <div>
-            <label>Account :</label>
+    
+        <div class="form-group ">
             <div>
-                <RadzenDropDown AllowClear="true" AllowFiltering="true" 
-                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts" 
-                                @bind-Value="balance.Account"
-                                TextProperty="LocalAccountNumber" ValueProperty="Account" 
-                                Style="margin-bottom: 20px; width:400px;"
-                                Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+                <RadzenLabel Text="Balance Amount" />
+
+                <div>
+                    <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
+                                    @bind-Value="balance.Account"
+                                    TextProperty="LocalAccountNumber" ValueProperty="Account"
+                                    Style="margin-bottom: 20px; width:400px;"
+                                    Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-6 align-items-center d-flex">
-            <RadzenLabel Text="Balance Date" />
-        </div>
-        <div class="col-md-6">
-            <RadzenDatePicker style="width: 100%;" Name="BalanceDate" @bind-Value="balance.BalanceDate" />
-        </div>
-    </div>
+        <div class="form-group ">
+            <div>
+                <RadzenLabel Text="Balance Date" />
 
-    <div class="form-group">
-        <div class="col-md-6 align-items-center d-flex">
-            <RadzenLabel Text="Balance Amount" />
-        </div>
-        <div class="col-md-6">
-            <RadzenNumeric @bind-Value="balance.BalanceAmount" Name="BalanceAmount"></RadzenNumeric>
-        </div>
-    </div>
+                <div>
+                    <RadzenDatePicker Style="margin-bottom: 20px; width:400px;" Name="BalanceDate" @bind-Value="balance.BalanceDate" />
+                </div>
+            </div>
 
-      <button type="submit" class="btn btn-success">
+        </div>
+
+        <div class="form-group">
+            <div>
+                <RadzenLabel Text="Balance Amount" />
+
+                <div>
+                    <RadzenNumeric Style="margin-bottom: 20px; width:400px;" @bind-Value="balance.BalanceAmount" Name="BalanceAmount"></RadzenNumeric>
+                </div>
+            </div>
+        </div>
+
+
+    <button type="submit" class="btn btn-success">
         @ButtonText
     </button>
 

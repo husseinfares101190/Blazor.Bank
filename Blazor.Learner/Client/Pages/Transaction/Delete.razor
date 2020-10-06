@@ -1,0 +1,71 @@
+﻿@page "/transaction/delete"
+@inject HttpClient http
+@inject IJSRuntime js
+@inject HttpClient client
+@inject Radzen.NotificationService notificationService
+
+<EditForm Model="@transaction" OnValidSubmit="@DeleteTransaction">
+    <DataAnnotationsValidator />
+
+    <div class="form-group ">
+        <div>
+            <label>Account :</label>
+            <div>
+                <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@transactions"
+                                @bind-Value="transaction"
+                                TextProperty="Id" ValueProperty="Transaction"
+                                Style="margin-bottom: 20px;  margin-bottom: 20px; width:400px;" />
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-danger">
+        Delete
+    </button>
+
+</EditForm>
+
+@code {
+
+    Transaction transaction = new Transaction();
+    List<Transaction> transactions = new List<Transaction>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await http.GetFromJsonAsync<List<Transaction>>("api/transaction");
+    }
+
+    protected async Task DeleteTransaction()
+    {
+        if (await js.InvokeAsync<bool>("confirm", $"Are you sure about delete {transaction.Id}'s ({transaction.TransactionDate.ToString("d")}) Transaction?"))
+        {
+            HttpResponseMessage response = await client.DeleteAsync($"api/transaction/{transaction.Id}");
+            if (response.IsSuccessStatusCode)
+            {
+                notificationService.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Transaction Deleted",
+                    Detail = "transaction deleted",
+                    Duration = 4000
+                });
+                await InvokeAsync(() => { StateHasChanged(); });
+            }
+            else
+            {
+                notificationService.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Transaction not deleted",
+                    Detail = "error occur see the log",
+                    Duration = 4000
+                });
+                await InvokeAsync(() => { StateHasChanged(); });
+
+            }
+
+            await OnInitializedAsync();
+        }
+    }
+}

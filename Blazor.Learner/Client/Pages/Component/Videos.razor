@@ -1,0 +1,30 @@
+﻿@page "/videos"
+@inject IVideosSerivce videosService 
+
+<h2>My Library</h2>
+
+<div class="row">
+    <div class="col-7">
+        <Video SelectedVideo="selectedVideo"/>
+    </div>
+    <div class="col-5">
+        <VideosCollection Videos="videos" SelectVideo="SelectVideo"/> 
+    </div>
+</div>
+
+@code {
+
+    List<VideoDetails> videos = new List<VideoDetails>();
+    VideoDetails selectedVideo = new VideoDetails();
+
+    protected override void OnInitialized()
+    {
+        videos = videosService.GetVideos();
+        selectedVideo = videos.FirstOrDefault();
+    }
+
+    void SelectVideo(VideoDetails video)
+    {
+        selectedVideo = video;
+    }
+}

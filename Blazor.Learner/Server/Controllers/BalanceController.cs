@@ -36,5 +36,6 @@ namespace Blazor.Learner.Server.Controllers
             await _context.SaveChangesAsync();
             return Ok(balance.Id);
         }
+
     }
 }

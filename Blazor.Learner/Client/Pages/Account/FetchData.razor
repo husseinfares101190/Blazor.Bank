@@ -39,8 +39,10 @@ else
                     <td>@acc.CurrentBalance</td>
                  
                     <td>
+
+                        <a class="btn btn-info" href="view/account/@acc.Id">View</a>
                         <a class="btn btn-success" href="account/edit/@acc.Id">Edit</a>
-                        <a class="btn btn-success" href="transaction/create/@acc.Id">Transaction</a>
+                        <a class="btn btn-warning" href="transaction/create/@acc.Id">Transaction</a>
                         <button class="btn btn-danger" @onclick="@(() => Delete(acc.Id))">Delete</button>
                     </td>
                 </tr>

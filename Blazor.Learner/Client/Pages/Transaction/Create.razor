@@ -49,15 +49,30 @@
     async Task CreateTransaction()
     {
 
-         await http.PostAsJsonAsync($"api/transaction/{accountId}", transaction);
-        notificationService.Notify(new NotificationMessage()
+        HttpResponseMessage respone = await http.PostAsJsonAsync($"api/transaction/{accountId}", transaction);
+        if (respone.IsSuccessStatusCode)
         {
-            Severity = NotificationSeverity.Success,
-            Summary = "Transaction Added",
-            Detail = transaction.TransactionAmount + " $ had been added to account "+ account.IBAN ,
-            Duration = 4000
-        });
-        await InvokeAsync(() => { StateHasChanged(); });
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Transaction Added",
+                Detail = transaction.TransactionAmount + " $ had been added to account " + account.IBAN,
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+        }
+        else
+        {
+            notificationService.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Transaction not Added",
+                Detail = "error occur see the log",
+                Duration = 4000
+            });
+            await InvokeAsync(() => { StateHasChanged(); });
+
+        }
 
         uriHelper.NavigateTo("account");
     }
