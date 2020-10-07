@@ -52,6 +52,21 @@ namespace Blazor.Learner.Server.Controllers
         }
 
 
+        [HttpGet("transactions/{accountId}")]
+        public async Task<IActionResult> GetTransactions(int accountId)
+        {
+            int [] transactionsId =  (from e in _context.Transactions
+                                 join d in _context.BalanceTransactions on e.Id equals d.TransactionId 
+                                 join i in _context.Balances on d.BalanceId equals i.Id  
+                                 where i.AccountNumber == accountId
+                                 select e.Id).ToArray() ;
+
+            Transaction [] transactions = _context.Transactions.Where(t => transactionsId.Contains(t.Id)).ToArray();
+                
+            return Ok(transactions);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Post(Account account)
         {

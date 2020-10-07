@@ -39,6 +39,14 @@
             </div>
         </div>
     </div>
+    <div class="form-group list-group-item">
+        <div>
+            <label class="list-group-item-heading">Current Balance :</label>
+            <div class="list-group-item-text">
+                <h5>@account.CurrentBalance</h5>
+            </div>
+        </div>
+    </div>
 </div>
 <br />
     <div class="list-group">
@@ -63,12 +71,16 @@
         [Parameter] public int accountId { get; set; }
         Account account = new Account();
         Balance[] balances { get; set; } = { };
-
+        Transaction[] transactions { get; set; } = { };
 
         protected async override Task OnParametersSetAsync()
         {
             account = await http.GetFromJsonAsync<Account>($"api/account/{accountId}");
             balances = await http.GetFromJsonAsync<Balance[]>($"api/account/balances/{accountId}");
+            transactions = await http.GetFromJsonAsync<Transaction[]>($"api/account/transactions/{accountId}");
+            double balanceSum = balances.Sum(b => b.BalanceAmount);
+            double transactionSum = transactions.Sum(t => t.TransactionAmount);
+            account.CurrentBalance = Convert.ToDecimal( balanceSum - transactionSum);
 
         }
     }
