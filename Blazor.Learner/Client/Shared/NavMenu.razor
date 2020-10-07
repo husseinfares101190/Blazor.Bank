@@ -26,7 +26,7 @@
 
         <li class="nav-item px-3">
             <NavLink class="nav-link" @onclick="()=>expandSubNav = !expandSubNav">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Balance
+                <span class="oi oi-euro" aria-hidden="true"></span> Balance
             </NavLink>
         </li>
         @if (expandSubNav)
@@ -43,15 +43,15 @@
         }
 
 
-        <li class="nav-item px-4">
+        <li class="nav-item px-3">
             <NavLink class="nav-link" @onclick="()=>expandSubNavTrans = !expandSubNavTrans">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Transaction
+                <span class="oi oi-cog" aria-hidden="true"></span> Transaction
             </NavLink>
         </li>
         @if (expandSubNavTrans)
         {
             <NavLink class="nav-link" href="/transaction/edit">
-                <span class="oioi-caret-right" aria-hidden="true"></span> Edit
+                <span class="oi-caret-right" aria-hidden="true"></span> Edit
             </NavLink>
             <NavLink class="nav-link" href="/transaction/delete">
                 <span class="oi oi-caret-right" aria-hidden="true"></span> Delete
