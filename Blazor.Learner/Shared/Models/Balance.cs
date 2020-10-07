@@ -16,7 +16,6 @@ namespace Blazor.Learner.Shared.Models
 
         [DataType(DataType.Date)]
         public DateTime BalanceDate { get; set; }
-
         public int AccountNumber { get; set; }
       
         public double BalanceAmount { get; set; }

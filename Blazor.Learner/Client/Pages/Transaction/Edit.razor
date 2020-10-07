@@ -9,8 +9,9 @@
 <EditForm Model="@transaction" OnValidSubmit="@SaveTransaction">
     <DataAnnotationsValidator />
 
+    <RadzenLabel Text="Choose Transaction :" />
     <div class="form-group ">
-        <RadzenLabel Text="Choose Transaction :"/>
+
 
         <RadzenDropDown AllowClear="true" AllowFiltering="true"
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@transactions"
@@ -38,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-danger" >
+        <button type="submit" class="btn btn-danger">
             Save
         </button>
 
