@@ -20,7 +20,7 @@ namespace Blazor.Learner.Shared.Models
         public string IBAN { get; set; }
         public string BankName { get; set; }
 
-        public decimal Currency { get; set; }
+        public String Currency { get; set; }
 
         public decimal CurrentBalance { get; set; }
 

@@ -47,7 +47,7 @@ HAVING max(BalanceDate) < CAST( GETDATE() AS Date ) and AccountId=@account_id
 
 		set @TransactionAmmount = (select sum(t.TransactionAmount)
 		from Transactions t join BalanceTransactions bt on t.Id = bt.TransactionId join Balances  b on b.Id=bt.BalanceId
-		where b.AccountId =5 and TransactionDate = CAST( GETDATE() AS Date )
+		where b.AccountId =@account_id and TransactionDate = CAST( GETDATE() AS Date )
 		group by b.AccountId);
        if(@BalanceAmmount is NULL)
 	   set @BalanceAmmount =0;

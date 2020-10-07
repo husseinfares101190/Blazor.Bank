@@ -1,44 +1,47 @@
-﻿<EditForm Model="@balance" OnValidSubmit="@OnValidSubmit">
+﻿
+@inject HttpClient http
+
+<EditForm Model="@balance" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
-        @if(!isEditMode)
-        {
+    @if (!isEditMode)
+    {
 
-        
-            <div class="form-group ">
-                <div>
-                    <RadzenLabel Text="Account" />
 
-                    <div>
-                        <RadzenDropDown AllowClear="true" AllowFiltering="true"
-                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
-                                        @bind-Value="balance.Account"
-                                        TextProperty="LocalAccountNumber" ValueProperty="Account"
-                                        Style="margin-bottom: 20px; width:400px;"
-                                        Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
-                    </div>
-                </div>
-            </div>
-        }
         <div class="form-group ">
             <div>
-                <RadzenLabel Text="Balance Date" />
+                <RadzenLabel Text="Account" />
 
                 <div>
-                    <RadzenDatePicker Style="margin-bottom: 20px; width:400px;" Name="BalanceDate" @bind-Value="balance.BalanceDate" />
+                    <RadzenDropDown AllowClear="true" AllowFiltering="true" 
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@accounts"
+                                    @bind-Value="balance.Account"
+                                    TextProperty="LocalAccountNumber" ValueProperty="Account"
+                                    Style="margin-bottom: 20px; width:400px;"
+                                    Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
                 </div>
             </div>
-
         </div>
+    }
+    <div class="form-group ">
+        <div>
+            <RadzenLabel Text="Balance Date" />
 
-        <div class="form-group">
             <div>
-                <RadzenLabel Text="Balance Amount" />
-
-                <div>
-                    <RadzenNumeric Style="margin-bottom: 20px; width:400px;" @bind-Value="balance.BalanceAmount" Name="BalanceAmount"></RadzenNumeric>
-                </div>
+                <RadzenDatePicker Style="margin-bottom: 20px; width:400px;" Name="BalanceDate" @bind-Value="balance.BalanceDate" DateRender="@DateRenderSpecial" />
             </div>
         </div>
+
+    </div>
+
+    <div class="form-group">
+        <div>
+            <RadzenLabel Text="Balance Amount" />
+
+            <div>
+                <RadzenNumeric Style="margin-bottom: 20px; width:400px;" @bind-Value="balance.BalanceAmount" Name="BalanceAmount"></RadzenNumeric>
+            </div>
+        </div>
+    </div>
 
 
     <button type="submit" class="btn btn-success">
@@ -54,10 +57,24 @@
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
     [Parameter] public bool isEditMode { get; set; }
+    public List<DateTime> dates { get; set; }
 
-    void ChangeBound(object value, string name)
+
+
+    void DateRenderSpecial(DateRenderEventArgs args)
+    {
+
+        if (dates != null && dates.Contains(args.Date))
+        {
+            args.Disabled = true;
+        }
+    }
+
+    async Task ChangeBound(object value, string name)
     {
         Console.Out.WriteLine(value);
+
+        dates = await http.GetFromJsonAsync<List<DateTime>>($"api/account/balancedates/{balance.Account.Id}");
         StateHasChanged();
     }
 }

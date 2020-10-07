@@ -16,7 +16,7 @@ namespace Blazor.Learner.Server.Migrations
                     LocalAccountNumber = table.Column<string>(nullable: false),
                     IBAN = table.Column<string>(nullable: false),
                     BankName = table.Column<string>(nullable: true),
-                    Currency = table.Column<decimal>(nullable: false),
+                    Currency = table.Column<string>(nullable: false),
                     CurrentBalance = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>

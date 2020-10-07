@@ -12,7 +12,7 @@
 @code {
     Balance balance = new Balance();
     List<Account> accounts  { get; set; }
-
+    List<DateTime> dates { get; set; }
     protected override async Task OnInitializedAsync()
     {
         accounts = await http.GetFromJsonAsync<List<Account>>("api/account");

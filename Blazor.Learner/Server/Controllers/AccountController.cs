@@ -27,12 +27,22 @@ namespace Blazor.Learner.Server.Controllers
             var accounts = await _context.Accounts.ToListAsync();
             return Ok(accounts);
         }
+
+        [HttpGet("balancedates/{id}")]
+        public async Task<IActionResult> GetBalanceDates(int id)
+        {
+            List<DateTime> dates = await _context.Balances.Where(b => b.AccountNumber == id).Select(b => b.BalanceDate).ToListAsync();
+            return Ok(dates);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
             return Ok(account);
         }
+
 
         [HttpGet("balances/{accountId}")]
         public async Task<IActionResult> GetBalances(int accountId)

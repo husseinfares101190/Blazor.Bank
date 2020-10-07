@@ -24,38 +24,41 @@
             </NavLink>
         </li>
 
-            <li class="nav-item px-3">
+        <li class="nav-item px-3">
             <NavLink class="nav-link" @onclick="()=>expandSubNav = !expandSubNav">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Balance
             </NavLink>
-            </li>
-            @if (expandSubNav)
-            {
-                <NavLink class="nav-link" href="/balance/create">
-                    <span class="oi oi-people" aria-hidden="true"></span> Create
-                </NavLink>
-                <NavLink class="nav-link" href="/balance/edit">
-                    <span class="oi oi-people" aria-hidden="true"></span> Edit
-                </NavLink>
-                <NavLink class="nav-link" href="/balance/delete">
-                    <span class="oi oi-people" aria-hidden="true"></span> Delete
-                </NavLink>
-            }
+        </li>
+        @if (expandSubNav)
+        {
+            <NavLink class="nav-link" href="/balance/create">
+                <span class="oi oi-caret-right" aria-hidden="true"></span> Create
+            </NavLink>
+            <NavLink class="nav-link" href="/balance/edit">
+                <span class="oi oi-caret-right" aria-hidden="true"></span> Edit
+            </NavLink>
+            <NavLink class="nav-link" href="/balance/delete">
+                <span class="oi oi-caret-right" aria-hidden="true"></span> Delete
+            </NavLink>
+        }
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/transaction/create">
-                <span class="oi oi-people" aria-hidden="true"></span> Transaction
+
+        <li class="nav-item px-4">
+            <NavLink class="nav-link" @onclick="()=>expandSubNavTrans = !expandSubNavTrans">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Transaction
             </NavLink>
         </li>
-
-        <li class="nav-item px-3">
+        @if (expandSubNavTrans)
+        {
+            <NavLink class="nav-link" href="/transaction/edit">
+                <span class="oioi-caret-right" aria-hidden="true"></span> Edit
+            </NavLink>
             <NavLink class="nav-link" href="/transaction/delete">
-                <span class="oi oi-people" aria-hidden="true"></span> Transaction
+                <span class="oi oi-caret-right" aria-hidden="true"></span> Delete
             </NavLink>
-        </li>
+         }
 
-
-
+       
     </ul>
 </div>
 
@@ -69,7 +72,8 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-   private bool expandSubNav;
+    private bool expandSubNav;
+    private bool expandSubNavTrans;
 
-   
+
 }

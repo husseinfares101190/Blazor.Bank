@@ -1,0 +1,105 @@
+﻿@page "/transaction/edit"
+@inject HttpClient http
+@inject IJSRuntime js
+@inject HttpClient client
+@inject Radzen.NotificationService notificationService
+
+<h4>Update Transaction </h4>
+<br />
+<EditForm Model="@transaction" OnValidSubmit="@SaveTransaction">
+    <DataAnnotationsValidator />
+
+    <div class="form-group ">
+        <RadzenLabel Text="Choose Transaction :"/>
+
+        <RadzenDropDown AllowClear="true" AllowFiltering="true"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data="@transactions"
+                        @bind-Value="transaction"
+                        TextProperty="Id" ValueProperty="Transaction"
+                        Style="margin-bottom: 20px;  margin-bottom: 20px; width:400px;" Change="@(args => ChangeBound(args, "DropDown with bound Value"))" />
+
+        <div class="form-group ">
+            <div>
+                <RadzenLabel Text="New Date :" />
+
+                <div>
+                    <RadzenDatePicker Style="margin-bottom: 20px; width:400px;" Name="BalanceDate" @bind-Value="NewDateTimew" />
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div>
+                <RadzenLabel Text="New Amount :" />
+
+                <div>
+                    <RadzenNumeric Style="margin-bottom: 20px; width:400px;" @bind-Value="newAmmount" Name="BalanceAmount"></RadzenNumeric>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-danger" >
+            Save
+        </button>
+
+    </div>
+
+
+</EditForm>
+
+@code {
+
+    Transaction transaction = new Transaction();
+    List<Transaction> transactions = new List<Transaction>();
+    double newAmmount { get; set; }
+    DateTime NewDateTimew { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await http.GetFromJsonAsync<List<Transaction>>("api/transaction");
+    }
+
+    void ChangeBound(object value, string name)
+    {
+        transaction = (Transaction)value;
+        newAmmount = transaction.TransactionAmount;
+        NewDateTimew = transaction.TransactionDate;
+        StateHasChanged();
+    }
+
+    protected async Task SaveTransaction()
+    {
+        if (await js.InvokeAsync<bool>("confirm", $"Are you sure about update {transaction.Id} ({transaction.TransactionDate.ToString("d")}) Transaction?"))
+        {
+            transaction.TransactionAmount = newAmmount;
+            transaction.TransactionDate = NewDateTimew;
+            HttpResponseMessage response =  await http.PostAsJsonAsync($"api/transaction/update", transaction);
+
+            if (response.IsSuccessStatusCode)
+            {
+                notificationService.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Transaction Updated",
+                    Detail = "transaction updated ",
+                    Duration = 4000
+                });
+                await InvokeAsync(() => { StateHasChanged(); });
+            }
+            else
+            {
+                notificationService.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Transaction not updated",
+                    Detail = "error occur see the log",
+                    Duration = 4000
+                });
+                await InvokeAsync(() => { StateHasChanged(); });
+
+            }
+
+            await OnInitializedAsync();
+        }
+    }
+}
