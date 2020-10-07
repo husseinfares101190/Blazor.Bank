@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Blazor.Learner.Server.Migrations
 {
-    public partial class initdb_0 : Migration
+    public partial class init_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace Blazor.Learner.Server.Migrations
                     LocalAccountNumber = table.Column<string>(nullable: false),
                     IBAN = table.Column<string>(nullable: false),
                     BankName = table.Column<string>(nullable: true),
-                    Currency = table.Column<string>(nullable: false),
+                    Currency = table.Column<string>(nullable: true),
                     CurrentBalance = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
@@ -86,7 +86,9 @@ namespace Blazor.Learner.Server.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TransactionAmount = table.Column<double>(nullable: false),
-                    TransactionDate = table.Column<DateTime>(nullable: false)
+                    TransactionDate = table.Column<DateTime>(nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
+                    IsFuture = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

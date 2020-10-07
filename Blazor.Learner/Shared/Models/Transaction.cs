@@ -15,6 +15,10 @@ namespace Blazor.Learner.Shared.Models
         public double TransactionAmount { get; set; } = 0.0;
         public DateTime TransactionDate { get; set; } = DateTime.Now;
 
+        public int AccountId { get; set; }
+
+        public bool IsFuture { get; set; } = false;
+
         public ICollection<BalanceTransaction> BalanceTransactions { get; set; }
 
         public Transaction()

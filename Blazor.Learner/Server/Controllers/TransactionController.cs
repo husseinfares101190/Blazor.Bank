@@ -89,6 +89,12 @@ namespace Blazor.Learner.Server.Controllers
                     _context.Entry(b).State = EntityState.Modified;
                 });
             }
+            else
+            {
+                transaction.IsFuture = true;
+                transaction.AccountId = account.Id;
+                _context.Entry(transaction).State = EntityState.Modified;
+            }
             transaction.TransactionAmount = newAmount;
             transaction.TransactionDate = newDate;
             _context.Entry(transaction).State = EntityState.Modified;
@@ -124,6 +130,12 @@ namespace Blazor.Learner.Server.Controllers
                     b.BalanceTransactions.Add(balanceTransaction);
                     _context.Entry(b).State = EntityState.Modified;
                 });
+            }
+            else
+            {
+                transaction.IsFuture = true;
+                transaction.AccountId = account.Id;
+                _context.Transactions.Add(transaction);
             }
 
             _context.Attach(account);

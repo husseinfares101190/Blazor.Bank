@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blazor.Learner.Server.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20201004170425_initdb_0")]
-    partial class initdb_0
+    [Migration("20201007203033_init_migration")]
+    partial class init_migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -96,8 +96,8 @@ namespace Blazor.Learner.Server.Migrations
                     b.Property<string>("BankName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Currency")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("CurrentBalance")
                         .HasColumnType("decimal(18,2)");
@@ -189,6 +189,12 @@ namespace Blazor.Learner.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsFuture")
+                        .HasColumnType("bit");
 
                     b.Property<double>("TransactionAmount")
                         .HasColumnType("float");

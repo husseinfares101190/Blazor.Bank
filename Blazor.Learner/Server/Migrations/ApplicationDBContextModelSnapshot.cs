@@ -94,8 +94,8 @@ namespace Blazor.Learner.Server.Migrations
                     b.Property<string>("BankName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Currency")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("CurrentBalance")
                         .HasColumnType("decimal(18,2)");
@@ -187,6 +187,12 @@ namespace Blazor.Learner.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsFuture")
+                        .HasColumnType("bit");
 
                     b.Property<double>("TransactionAmount")
                         .HasColumnType("float");
