@@ -1,0 +1,71 @@
+﻿USE [testdb]
+GO
+/****** Object:  StoredProcedure [dbo].[create_balance]    Script Date: 10/7/2020 12:50:24 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[create_balance]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE 
+    @account_id int;
+	DECLARE cursor_account CURSOR
+	FOR select  Id 
+	from dbo.Accounts as acc  where not exists ( select 1 from Balances as bal where AccountId=  acc.Id and 
+	bal.BalanceDate = CAST( GETDATE() AS Date )
+	);
+	OPEN cursor_account;
+
+FETCH NEXT FROM cursor_account INTO 
+    @account_id;
+
+WHILE @@FETCH_STATUS = 0
+    BEGIN
+
+	DECLARE @BalanceId INT ;
+	DECLARE @BalanceAmmount INT = 0;
+	DECLARE @TransactionAmmount INT = 0;
+
+
+SET @BalanceId = (
+   SELECT Id
+FROM Balances
+GROUP BY Id,AccountId
+HAVING max(BalanceDate) < CAST( GETDATE() AS Date ) and AccountId=@account_id
+);
+
+		set @BalanceAmmount = (select BalanceAmount from Balances where Id = @BalanceId);
+
+		set @TransactionAmmount = (select sum(t.TransactionAmount)
+		from Transactions t join BalanceTransactions bt on t.Id = bt.TransactionId join Balances  b on b.Id=bt.BalanceId
+		where b.AccountId =5 and TransactionDate = CAST( GETDATE() AS Date )
+		group by b.AccountId);
+       if(@BalanceAmmount is NULL)
+	   set @BalanceAmmount =0;
+
+	     if(@TransactionAmmount is NULL)
+	   set @TransactionAmmount =0;
+	  
+	   insert into Balances(AccountId,AccountNumber,BalanceDate,BalanceAmount)
+	   values (@account_id,@account_id,CAST( GETDATE() AS Date ),@BalanceAmmount+@TransactionAmmount);
+
+
+        FETCH NEXT FROM cursor_account INTO 
+            @account_id;
+    END;
+
+CLOSE cursor_account;
+
+DEALLOCATE cursor_account;
+
+
+END
